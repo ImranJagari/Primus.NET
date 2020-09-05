@@ -16,8 +16,9 @@ namespace Primus.NET.Network
         private static Dictionary<EngineIOMessageTypeEnum, Delegate> _handlersEngineIO = new Dictionary<EngineIOMessageTypeEnum, Delegate>();
         private static Dictionary<string, Delegate> _handlersPrimus = new Dictionary<string, Delegate>();
 
-        public static void Initialize(Assembly asm)
+        public static void Initialize()
         {
+            Assembly asm = typeof(MessageParser).Assembly;
             if (!_isInitialized)
             {
                 if (PrimusClient.SocketType == SocketTypeEnum.ENGINE_IO)

@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PrimusNetServer.Network;
+using Primus.NET.Controllers;
+using Primus.NET.Network;
+using System;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace PrimusNetServer
 {
@@ -21,6 +18,7 @@ namespace PrimusNetServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMvc().AddApplicationPart(typeof(PrimusController).Assembly).AddControllersAsServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,7 +29,7 @@ namespace PrimusNetServer
                 app.UseDeveloperExceptionPage();
             }
 
-            MessageParser.Initialize(Assembly.GetExecutingAssembly());
+            MessageParser.Initialize();
 
             app.UseRouting();
             app.UseWebSockets(new WebSocketOptions()
@@ -43,6 +41,7 @@ namespace PrimusNetServer
                 endpoints.MapDefaultControllerRoute();
             });
 
+            ///--------------- Handle 101 http response on task ----------------------///
             app.Use(async (context, next) =>
             {
                 var socketManager = context.WebSockets;
@@ -58,6 +57,7 @@ namespace PrimusNetServer
 
                 await next();
             });
+            ///--------------- Handle 101 http response on task ----------------------///
         }
     }
 }

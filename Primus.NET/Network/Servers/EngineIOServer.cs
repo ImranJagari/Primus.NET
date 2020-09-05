@@ -19,7 +19,7 @@ namespace Primus.NET.Network.Servers
             Guid clientId = Guid.Empty;
             if (socketManager.IsWebSocketRequest && transport == "websocket" && Guid.TryParse(sid, out clientId))
             {
-                socketManager.AcceptWebSocketAsync().Execute(async (webSocket) =>
+                var webSocket = await socketManager.AcceptWebSocketAsync();
                 {
                     PrimusClient client = ClientManager.GetClient(clientId);
                     if (client != null)
@@ -27,7 +27,7 @@ namespace Primus.NET.Network.Servers
                         client.ClientWs = webSocket;
                         await client.StartReceive();
                     }
-                });
+                }
 
                 return new ContentResult();
             }
@@ -69,7 +69,6 @@ namespace Primus.NET.Network.Servers
                     return result;
                 }
             }
-
 
             return GetUnknownSessionId();
         }
