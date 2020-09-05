@@ -11,12 +11,12 @@ Rewrite of primus server in .NET Core
 services.AddMvc().AddApplicationPart(typeof(PrimusController).Assembly).AddControllersAsServices();
 ```
 
-3) Add this line for loading the handlers which is for the data received from the websocket
+3) Add this line in your `Configure` method in `Startup.cs`. for loading the handlers which is for the data received from the websocket in
 ```csharp
 MessageParser.Initialize();
 ```
 
-4) Add those lines for initiating the websocket manager from ASP.Net Core
+4) Add those lines in your `Configure` method in `Startup.cs`. for initiating the websocket manager from ASP.Net Core
 ```csharp
 app.UseWebSockets(new WebSocketOptions()
 {
@@ -25,7 +25,7 @@ app.UseWebSockets(new WebSocketOptions()
 });
 ```
 
-5) Add those line to change the status code when received a WebsocketRequest because it's the communication is initiating in a Task
+5) Add those lines in your `Configure` method in `Startup.cs`. to change the status code when received a WebsocketRequest because it's the communication is initiating in a Task
 ```csharp
 ///--------------- Handle 101 http response on task ----------------------///
 app.Use(async (context, next) =>
