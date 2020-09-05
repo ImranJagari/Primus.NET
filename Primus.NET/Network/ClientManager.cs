@@ -21,11 +21,7 @@ namespace Primus.NET.Network
 
         public static PrimusClient GetClient(Guid guid)
         {
-            if (_clients.TryGetValue(guid, out PrimusClient client))
-            {
-                return client;
-            }
-            return null;
+            return _clients.TryGetValue(guid, out PrimusClient client) ? client : null;
         }
 
         public static PrimusClient CreateClient()
