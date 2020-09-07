@@ -1,6 +1,7 @@
 # Primus.NET
 Rewrite of primus server in .NET Core
 
+Original repository : https://github.com/primus/primus
 
 ## How to use Primus.NET in a ASP.Net Core project
 
