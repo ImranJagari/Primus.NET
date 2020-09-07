@@ -9,22 +9,21 @@ namespace Primus.NET.Network.Servers
         //not tested
         public static async Task<IActionResult> CheckWebsocketContext(HttpContext httpContext)
         {
-            //var socketManager = httpContext.WebSockets;
-            //Guid clientId = Guid.Empty;
-            //if (socketManager.IsWebSocketRequest)
-            //{
-            //    socketManager.AcceptWebSocketAsync().Execute(async (webSocket) => {
-            //        PrimusClient client = ClientManager.GetClient(clientId);
-            //        if (client != null)
-            //        {
-            //            client.ClientWs = webSocket;
-            //            await client.StartReceive();
-            //        }
-            //    });
+            var socketManager = httpContext.WebSockets;
+            if (socketManager.IsWebSocketRequest)
+            {
+                var webSocket = await socketManager.AcceptWebSocketAsync();
+                {
+                    PrimusClient client = ClientManager.CreateClient();
+                    if (client != null)
+                    {
+                        client.ClientWs = webSocket;
+                        await client.StartReceive();
+                    }
+                }
 
-            //    return new ContentResult();
-            //}
-
+                return new ContentResult();
+            }
             return new ContentResult();
         }
     }

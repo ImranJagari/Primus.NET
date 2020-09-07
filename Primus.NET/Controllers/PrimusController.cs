@@ -12,7 +12,7 @@ namespace Primus.NET.Controllers
         [HttpGet]
         [HttpPost]
         [Route("primus")]
-        public async Task<IActionResult> Index(string transport, string sid)
+        public async Task<IActionResult> PrimusEIO(string transport, string sid)
         {
             if (PrimusClient.SocketType == SocketTypeEnum.ENGINE_IO)
             {
@@ -23,6 +23,16 @@ namespace Primus.NET.Controllers
                 return await RawPrimusServer.CheckWebsocketContext(HttpContext);
             }
             return Json(string.Empty);
+        }
+
+        [HttpGet]
+        [Route("primus/{serverId}/{connectionId}/websocket")]
+        public async Task<IActionResult> PrimusSockJs(int serverId, string connectionId)
+        {
+            return await Task.FromResult(Json(new {
+                serverId,
+                connectionId
+            }));
         }
 
         [HttpGet]

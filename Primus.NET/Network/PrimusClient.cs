@@ -35,6 +35,17 @@ namespace Primus.NET.Network
         }
 
         public DateTime LastHeartBeatSent { get; set; }
+        public bool HasGetHeartBeatResponse
+        {
+            get
+            {
+                return _hasGetHeartBeatResponse;
+            }
+            set
+            {
+                _hasGetHeartBeatResponse = value;
+            }
+        }
         public WebSocket ClientWs { get; set; }
 
 
@@ -67,7 +78,6 @@ namespace Primus.NET.Network
             if (SocketType == SocketTypeEnum.ENGINE_IO)
             {
                 data = $"4{data}";
-                data = $"{data.Count()}:{data}";
             }
 
             var dataSerialized = Encoding.UTF8.GetBytes(data);
@@ -94,7 +104,7 @@ namespace Primus.NET.Network
                 if (_hasGetHeartBeatResponse)
                 {
                     _hasGetHeartBeatResponse = false;
-                    Ping();
+                    Ping(true);
                 }
                 else
                 {
@@ -103,21 +113,23 @@ namespace Primus.NET.Network
             }
         }
 
-        public void Ping(bool hasProbe = false)
+        public void Ping(bool serverHeartBeat = false, bool hasProbe = false)
         {
-            if (SocketType == SocketTypeEnum.ENGINE_IO)
-            {
-                var value = EngineIOMessageTypeEnum.PING.GetWSValue();
-
-                if (hasProbe)
-                    value += "probe";
-
-                Task.WaitAny(Send(value));
-            }
-            if (SocketType == SocketTypeEnum.RAW)
-            {
+            if (serverHeartBeat)
                 Task.WaitAny(Send($"\"primus::ping::{DateTime.Now.GetUnixTimeStamp()}\""));
+            else
+            {
+                if (SocketType == SocketTypeEnum.ENGINE_IO)
+                {
+                    var value = EngineIOMessageTypeEnum.PING.GetWSValue();
+
+                    if (hasProbe)
+                        value += "probe";
+
+                    Task.WaitAny(Send(value));
+                }
             }
+            
         }
         public void Pong(bool hasProbe = false)
         {
