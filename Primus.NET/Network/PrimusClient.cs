@@ -3,11 +3,13 @@ using Primus.NET.Extensions;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SystemTimer = System.Timers.Timer;
 
 namespace Primus.NET.Network
 {
@@ -26,12 +28,20 @@ namespace Primus.NET.Network
         private byte _handshakeCheckupTimes = 0;
         private bool _isHandshakeCompleted = false;
 
+        private SystemTimer _timer;
+
         public Guid Guid { get; }
 
         public PrimusClient(Guid guid)
         {
             Guid = guid;
             LastHeartBeatSent = DateTime.Now;
+
+            _timer = new SystemTimer(HeartBeatTimeInMilliseconds);
+            _timer.Elapsed += async (e, s) =>
+            {
+                await CheckHeartBeat();
+            };
         }
 
         public DateTime LastHeartBeatSent { get; set; }
@@ -53,8 +63,6 @@ namespace Primus.NET.Network
         {
             while (ClientWs.State == WebSocketState.Open)
             {
-                await CheckHeartBeat();
-
                 var result = await ClientWs.ReceiveAsync(_buffer, CancellationToken.None);
                 if (result.Count > 0)
                 {
