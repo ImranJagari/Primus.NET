@@ -171,9 +171,17 @@ namespace Primus.NET.Network
 
         public async Task Close()
         {
+            _timer.Close();
+            _timer = null;
+
+            await Send("\"primus::server::close\"");
+
             ClientManager.RemoveClient(Guid);
             if (ClientWs != null && ClientWs.State != WebSocketState.Closed)
                 await ClientWs.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+
+            GC.SuppressFinalize(this);
+
         }
     }
 }

@@ -76,13 +76,14 @@ namespace Primus.NET.Network
                 }
 
                 rawMessage = rawMessage[1..];
-
-                if (_handlersEngineIO.TryGetValue(messageType, out Delegate handlerEIO))
+                if (!HandlePrimusMessage(rawMessage, client))
                 {
-                    handlerEIO.DynamicInvoke(null, client, rawMessage);
+                    if (_handlersEngineIO.TryGetValue(messageType, out Delegate handlerEIO))
+                    {
+                        handlerEIO.DynamicInvoke(null, client, rawMessage);
+                    }
                 }
-
-                HandlePrimusMessage(rawMessage, client);
+                
             }
             else
             {
@@ -90,13 +91,15 @@ namespace Primus.NET.Network
             }
         }
 
-        private static void HandlePrimusMessage(string rawMessage, PrimusClient client)
+        private static bool HandlePrimusMessage(string rawMessage, PrimusClient client)
         {
             var handlerPrimus = _handlersPrimus.FirstOrDefault(handler => rawMessage.Contains(handler.Key)).Value;
             if (handlerPrimus != null)
             {
                 handlerPrimus.DynamicInvoke(null, client, rawMessage);
+                return true;
             }
+            return false;
         }
     }
 }
