@@ -7,7 +7,7 @@ Original repository : https://github.com/primus/primus
 
 1) First of all, add a reference of the lib to your ASP.Net Core project.
 
-(For next steps, you can check the Example ASP.Net core project, to avoid misunderstandings !)
+***(For next steps, you can check the Example ASP.Net core project, to avoid misunderstandings !)***
 
 2) Add this line in your `ConfigureServices` method in `Startup.cs`.  It permits to load the native routes of primus inside the lib
 ```csharp
