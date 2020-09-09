@@ -17,7 +17,7 @@ services.AddMvc().AddApplicationPart(typeof(PrimusController).Assembly).AddContr
 MessageParser.Initialize();
 ```
 
-4) Add those lines in your `Configure` method in `Startup.cs`. for initiating the websocket manager from ASP.Net Core
+4) Add those lines in your `Configure` method in `Startup.cs` above `app.UseRouting();`. for initiating the websocket manager from ASP.Net Core
 ```csharp
 app.UseWebSockets(new WebSocketOptions()
 {
@@ -26,24 +26,10 @@ app.UseWebSockets(new WebSocketOptions()
 });
 ```
 
-5) Add those lines in your `Configure` method in `Startup.cs`. to change the status code when received a WebsocketRequest because it's the communication is initiating in a Task
+5) Add those lines in your `Configure` method in `Startup.cs` above `app.UseRouting();` and after `app.UseWebSockets();`. to handle a WebsocketRequest because the communication is initiating in a Task
 ```csharp
 ///--------------- Handle 101 http response on task ----------------------///
-app.Use(async (context, next) =>
-{
-    var socketManager = context.WebSockets;
-    if (socketManager.IsWebSocketRequest && context.Request.Query["transport"] == "websocket" && Guid.TryParse(context.Request.Query["sid"], out Guid clientId))
-    {
-        context.Response.OnStarting(() =>
-        {
-            context.Response.StatusCode = StatusCodes.Status101SwitchingProtocols;
-
-            return Task.CompletedTask;
-        });
-    }
-
-    await next();
-});
+app.UseMiddleware<WebSocketMiddleware>();
 ///--------------- Handle 101 http response on task ----------------------///
 ```
 
