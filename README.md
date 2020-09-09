@@ -17,7 +17,7 @@ services.AddMvc().AddApplicationPart(typeof(PrimusController).Assembly).AddContr
 MessageParser.Initialize();
 ```
 
-4) Add those lines in your `Configure` method in `Startup.cs` above `app.UseRouting();`. for initiating the websocket manager from ASP.Net Core
+4) Add those lines in your `Configure` method in `Startup.cs` above `app.UseRouting();`. to let Kestrel manage the websocket connections
 ```csharp
 app.UseWebSockets(new WebSocketOptions()
 {
@@ -26,11 +26,9 @@ app.UseWebSockets(new WebSocketOptions()
 });
 ```
 
-5) Add those lines in your `Configure` method in `Startup.cs` above `app.UseRouting();` and after `app.UseWebSockets();`. to handle a WebsocketRequest because the communication is initiating in a Task
+5) Add this line in your `Configure` method in `Startup.cs` above `app.UseRouting();` and after `app.UseWebSockets();`. to handle a WebsocketRequest because the communication is initiating in a Task
 ```csharp
-///--------------- Handle 101 http response on task ----------------------///
 app.UseMiddleware<WebSocketMiddleware>();
-///--------------- Handle 101 http response on task ----------------------///
 ```
 
 6) Enjoy !
