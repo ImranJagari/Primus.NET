@@ -17,21 +17,7 @@ namespace Primus.NET.Network.Servers
         {
             var socketManager = httpContext.WebSockets;
             Guid clientId = Guid.Empty;
-            if (socketManager.IsWebSocketRequest && transport == "websocket" && Guid.TryParse(sid, out clientId))
-            {
-                var webSocket = await socketManager.AcceptWebSocketAsync();
-                {
-                    PrimusClient client = ClientManager.GetClient(clientId);
-                    if (client != null)
-                    {
-                        client.ClientWs = webSocket;
-                        await client.StartReceive();
-                    }
-                }
-
-                return new ContentResult();
-            }
-            else if (transport == "polling" && string.IsNullOrWhiteSpace(sid) && httpContext.Request.Method == "GET")
+            if (transport == "polling" && string.IsNullOrWhiteSpace(sid) && httpContext.Request.Method == "GET")
             {
                 PrimusClient client = ClientManager.CreateClient();
 

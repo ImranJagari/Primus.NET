@@ -18,10 +18,6 @@ namespace Primus.NET.Controllers
             {
                 return await EngineIOServer.CheckWebsocketContext(HttpContext, transport, sid);
             }
-            else if (PrimusClient.SocketType == SocketTypeEnum.RAW)
-            {
-                return await RawPrimusServer.CheckWebsocketContext(HttpContext);
-            }
             return Json(string.Empty);
         }
 
